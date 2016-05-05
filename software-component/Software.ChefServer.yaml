@@ -1,0 +1,126 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-05-03T19:25:15.342Z"
+lastUpdated: "2016-05-03T23:35:38.849Z"
+id: "Software.ChefServer"
+name: "ChefServer"
+description: "Installs and configures Chef Server 12.6.0"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "ChefServerURL"
+    label: "ChefServerURL"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "derivedValue"
+        value:
+          type: "constant"
+      - type: "editable"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+      - type: "internal"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "Login"
+    label: "Login"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "Administrator"
+    isMultiValued: false
+  - id: "Password"
+    label: "Password"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "password"
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-05-03T19:25:15.343Z"
+  lastUpdated: "2016-05-03T23:35:38.849Z"
+  script:
+    scriptContent: "yum -y install wget\ncd /tmp\nwget https://packages.chef.io/stable/el/7/chef-server-core-12.6.0-1.el7.x86_64.rpm\n\
+      rpm -Uvh chef-server-core-12.6.0-1.el7.x86_64.rpm"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"
+- createdDate: "2016-05-03T20:10:42.482Z"
+  lastUpdated: "2016-05-03T23:35:38.849Z"
+  script:
+    scriptContent: "export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin\n\
+      chef-server-ctl reconfigure\nchef-server-ctl install chef-manage\nchef-server-ctl\
+      \ reconfigure\nchef-manage-ctl reconfigure --accept-license\nchef-server-ctl\
+      \ user-create administrator Chef Admin administrator@corp.local 'password' --filename\
+      \ /tmp/administrator.pem\n"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "START"
+    label: "Start"
+- createdDate: "2016-05-03T19:28:12.939Z"
+  lastUpdated: "2016-05-03T23:35:38.849Z"
+  script:
+    scriptContent: "systemctl stop firewalld\nsystemctl disable firewalld\nexport\
+      \ my_ip=$(hostname  -I | cut -f1 -d' ')\nChefServerURL=http://$my_ip"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "CONFIGURE"
+    label: "Configure"

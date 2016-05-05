@@ -1,0 +1,12 @@
+name: "auto-generated-pkg-b99f7da8-b7c6-40b3-8f92-470e821016f1"
+productVersion: "7.0.1-SNAPSHOT"
+data:
+- locator: "composite-blueprint/ChefServer.yaml"
+  name: "ChefServer"
+  description: "ChefServer"
+  dependencies:
+  - "software-component/Software.ChefServer.yaml"
+- locator: "software-component/Software.ChefServer.yaml"
+  name: "ChefServer"
+  description: "Installs and configures Chef Server 12.6.0"
+exportTime: "2016-05-05T22:11:40.932Z"
